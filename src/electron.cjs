@@ -3,12 +3,38 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const contextMenu = require('electron-context-menu');
 const serve = require('electron-serve');
 const path = require('path');
+const readline = require('node:readline');
 
 try {
 	require('electron-reloader')(module);
 } catch (e) {
 	console.error(e);
 }
+
+const { spawn } = require('child_process');
+const rustExecutablePath = path.join(__dirname, '../bin', 'peer.exe');
+const rustProcess = spawn(rustExecutablePath);
+
+const { stdin: input, stdout: output } = rustProcess;
+const rl = readline.createInterface({ input, output });
+
+rustProcess.stdin.write('{"id":1,"type":"list"}\n');
+
+rl.on('line', (line) => {
+	console.log(line);
+});
+
+input.on('data', (data) => {
+	console.log(`Rust data: ${data}`);
+});
+
+rustProcess.stderr.on('data', (data) => {
+	console.error(`Rust error: ${data}`);
+});
+
+rustProcess.on('close', (code) => {
+	console.log(`Rust process exited with code ${code}`);
+});
 
 const serveURL = serve({ directory: '.' });
 const port = process.env.PORT || 5173;
@@ -89,12 +115,24 @@ function createMainWindow() {
 	else serveURL(mainWindow);
 }
 
-app.once('ready', createMainWindow);
 app.on('activate', () => {
 	if (!mainWindow) {
 		createMainWindow();
 	}
+
 });
+
+app.once('ready', () => {
+	createMainWindow();
+});
+
+app.once('close', () => {
+	console.log(
+		"Electron app is closing..."
+	)
+})
+
+
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') app.quit();
 });
