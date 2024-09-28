@@ -12,20 +12,16 @@ try {
 }
 
 const { spawn } = require('child_process');
-const rustExecutablePath = path.join(__dirname, '../bin', 'peer.exe');
+const rustExecutablePath = path.join(__dirname, '../bin', 'peer');
 const rustProcess = spawn(rustExecutablePath);
 
-const { stdin: input, stdout: output } = rustProcess;
+const { stdin: output, stdout: input } = rustProcess;
 const rl = readline.createInterface({ input, output });
 
 rustProcess.stdin.write('{"id":1,"type":"list"}\n');
 
 rl.on('line', (line) => {
 	console.log(line);
-});
-
-input.on('data', (data) => {
-	console.log(`Rust data: ${data}`);
 });
 
 rustProcess.stderr.on('data', (data) => {
