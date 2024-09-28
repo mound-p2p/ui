@@ -8,24 +8,24 @@ import Button from '$lib/components/ui/button/button.svelte';
 type File = {
 	name: string;
 	hash: string;
-	size: number; // In bytes
+	chunk_amount: number; // In bytes
 };
 
 let files: File[] = [
 	{
 		name: 'File Name',
 		hash: '24.48.0.1',
-		size: 1234567,
+		chunk_amount: 1234567,
 	},
 	{
 		name: 'File Name 2',
 		hash: '24.132891738912dwas48.0.1',
-		size: 12345132167,
+		chunk_amount: 12345132167,
 	},
 	{
 		name: 'File Name 3',
 		hash: '24.48.0.3193781892y738121',
-		size: 1231221567,
+		chunk_amount: 1231221567,
 	},
 ];
 </script>
@@ -41,7 +41,7 @@ let files: File[] = [
 					</Card.Title>
 					<Card.Description>
 						<p class="text-md">hash: {file.hash}</p>
-						<p class="text-md">size: {file.size}</p>
+						<p class="text-md">chunk amount: {file.chunk_amount}</p>
 					</Card.Description>
 					<Button href="/download" variant="outline" class=" p-6">
 						<svg
