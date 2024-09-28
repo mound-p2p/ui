@@ -33,11 +33,17 @@ ipcMain.handle('request', async (event, data) => {
 rl.on('line', (line) => {
 	const message = JSON.parse(line);
 	const { id } = message;
-	const { resolve, reject } = map.get(id);
+	const value = map.get(id);
 
-	map.delete(id);
+	if (value) {
+		const { resolve, reject } = value;
 
-	resolve(message);
+		map.delete(id);
+
+		resolve(message);
+	} else {
+		mainWindow.webContents.send(`response:${id}`, message);
+	}
 });
 
 rustProcess.stderr.on('data', (data) => {

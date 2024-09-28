@@ -7,13 +7,6 @@ import Input from '$lib/components/ui/input/input.svelte';
 
 let desktop: string;
 
-if (window.electron && browser) {
-	window.electron.receive('from-main', (data: any) => {
-		desktop = `Received Message "${data}" from Electron`;
-		console.log(desktop);
-	});
-}
-
 const agent = window.electron ? 'Electron' : 'Browser';
 </script>
 

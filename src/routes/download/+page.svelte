@@ -3,24 +3,22 @@ import * as Card from '$lib/components/ui/card';
 import { onMount } from 'svelte';
 import Button from '$lib/components/ui/button/button.svelte';
 
-type File = {
-	name: string;
-	id: string;
-	chunks: number; // In bytes
-	peer_with_parts: number;
-};
-
-let files: File[] = [];
+let files: ProcessFile[] = [];
 
 onMount(async () => {
 	const res = await window.electron.sendRequest({ type: 'getFiles' });
-	files = res.data;
+	files = res.data as ProcessFile[];
 	console.log(files);
 });
 
 async function downloadFile(file_hash: string) {
-	const res = await window.electron.sendRequest({ type: 'downloadByHash', file_hash });
-	console.log(res);
+	const res = await window.electron.sendRequest({ type: 'downloadByHash', fileHash: file_hash });
+
+	window.electron.receive(`response:${res.id}`, ({ data }) => {
+		if ('progress' in data) {
+			console.log('download progress', data.progress);
+		}
+	});
 }
 </script>
 
