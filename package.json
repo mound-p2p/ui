@@ -23,6 +23,7 @@
 		"Chrome 89"
 	],
 	"dependencies": {
+		"bits-ui": "^0.21.15",
 		"chart.js": "^4.4.4",
 		"clsx": "^2.1.1",
 		"electron-context-menu": "^3.6.1",
@@ -33,6 +34,7 @@
 		"tailwind-variants": "^0.2.1"
 	},
 	"devDependencies": {
+		"@iconify-json/tdesign": "^1.2.1",
 		"@sveltejs/adapter-static": "2.0.1",
 		"@sveltejs/kit": "1.14.0",
 		"@tailwindcss/typography": "^0.5.14",

@@ -1,4 +1,5 @@
 <script lang="ts">
+import Navbar from '$lib/components/Navbar.svelte';
 import '../app.css';
 import { onMount } from 'svelte';
 
@@ -9,6 +10,7 @@ onMount(() => (ready = true));
 <div class="dragbar" />
 
 {#if ready}
+	<Navbar />
 	<div class="p-8">
 		<slot />
 	</div>
