@@ -46,7 +46,12 @@ function handleClick() {
 	inputElement.click();
 }
 
-function uploadFile() {}
+async function uploadFile() {
+	console.log(file.path);
+
+	const res = await window.electron.sendRequest({ type: 'upload', path: file!.path });
+	console.log(res);
+}
 </script>
 
 <h1 class="pb-8 text-center text-3xl font-bold">Upload Files:</h1>
@@ -89,6 +94,6 @@ function uploadFile() {}
 		{/if}
 
 		<Progress value={0} class="my-8"></Progress>
-		<Button class=" w-32">Upload</Button>
+		<Button class=" w-32" on:click={uploadFile}>Upload</Button>
 	</div>
 </div>

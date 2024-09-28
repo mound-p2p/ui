@@ -1,33 +1,27 @@
 <script lang="ts">
 import * as Card from '$lib/components/ui/card';
-import { Badge } from '$lib/components/ui/badge/index.js';
-import axios from 'axios';
 import { onMount } from 'svelte';
 import Button from '$lib/components/ui/button/button.svelte';
 
 type File = {
 	name: string;
-	hash: string;
-	chunk_amount: number; // In bytes
+	id: string;
+	chunks: number; // In bytes
+	peer_with_parts: number;
 };
 
-let files: File[] = [
-	{
-		name: 'File Name',
-		hash: '24.48.0.1',
-		chunk_amount: 1234567,
-	},
-	{
-		name: 'File Name 2',
-		hash: '24.132891738912dwas48.0.1',
-		chunk_amount: 12345132167,
-	},
-	{
-		name: 'File Name 3',
-		hash: '24.48.0.3193781892y738121',
-		chunk_amount: 1231221567,
-	},
-];
+let files: File[] = [];
+
+onMount(async () => {
+	const res = await window.electron.sendRequest({ type: 'getFiles' });
+	files = res.data;
+	console.log(files);
+});
+
+async function downloadFile(file_hash: string) {
+	const res = await window.electron.sendRequest({ type: 'downloadByHash', file_hash });
+	console.log(res);
+}
 </script>
 
 <h1 class="pb-8 text-center text-3xl font-bold">Available Files:</h1>
@@ -40,10 +34,16 @@ let files: File[] = [
 						{file.name}
 					</Card.Title>
 					<Card.Description>
-						<p class="text-md">hash: {file.hash}</p>
-						<p class="text-md">chunk amount: {file.chunk_amount}</p>
+						<p class="text-md">hash: {file.id}</p>
+						<p class="text-md">chunk amount: {file.chunks}</p>
+						<p class="text-md">peers with parts: {file.chunks}</p>
 					</Card.Description>
-					<Button href="/download" variant="outline" class=" p-6">
+					<Button
+						href="/download"
+						variant="outline"
+						class=" p-6"
+						on:click={() => downloadFile(file.id)}
+					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="32"

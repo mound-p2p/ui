@@ -11,6 +11,7 @@ try {
 	console.error(e);
 }
 
+let id_counter = 0;
 const { spawn } = require('child_process');
 const rustExecutablePath = path.join(__dirname, '../bin', 'peer');
 const rustProcess = spawn(rustExecutablePath);
@@ -18,10 +19,25 @@ const rustProcess = spawn(rustExecutablePath);
 const { stdin: output, stdout: input } = rustProcess;
 const rl = readline.createInterface({ input, output });
 
-rustProcess.stdin.write('{"id":1,"type":"list"}\n');
+const map = new Map();
+
+ipcMain.handle('request', async (event, data) => {
+	return new Promise((resolve, reject) => {
+		const id = id_counter++;
+		const message = JSON.stringify({ id, ...data });
+		map.set(id, { resolve, reject });
+		rustProcess.stdin.write(`${message}\n`);
+	});
+});
 
 rl.on('line', (line) => {
-	console.log(line);
+	const message = JSON.parse(line);
+	const { id } = message;
+	const { resolve, reject } = map.get(id);
+
+	map.delete(id);
+
+	resolve(message);
 });
 
 rustProcess.stderr.on('data', (data) => {
@@ -126,8 +142,7 @@ app.once('close', () => {
 	console.log(
 		"Electron app is closing..."
 	)
-})
-
+});
 
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') app.quit();
