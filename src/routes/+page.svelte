@@ -20,6 +20,8 @@
 
 	<h1>Hello {agent}!</h1>
 
+	<a href="/data">Click Me</a>
+
 	<Counter id="0" {agent} />
 
 	{#if desktop}
