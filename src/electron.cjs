@@ -21,6 +21,10 @@ const rl = readline.createInterface({ input, output });
 
 const map = new Map();
 
+ipcMain.handle('spawn', async (event, data) => {
+	console.log(data);	
+});
+
 ipcMain.handle('request', async (event, data) => {
 	return new Promise((resolve, reject) => {
 		const id = id_counter++;
