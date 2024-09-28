@@ -32,7 +32,7 @@ let files: File[] = [
 
 <h1 class="pb-8 text-center text-3xl font-bold">Available Files:</h1>
 <div class="grid place-items-center">
-	<div class="grid w-full max-w-5xl grid-cols-3 gap-8">
+	<div class="grid w-full max-w-5xl grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 		{#each files as file}
 			<Card.Root>
 				<Card.Header>

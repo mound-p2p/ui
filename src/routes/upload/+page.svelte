@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import Button from '$lib/components/ui/button/button.svelte';
-    import { Progress } from '$lib/components/ui/progress'
+import { Input } from '$lib/components/ui/input';
+import { Label } from '$lib/components/ui/label';
+import Button from '$lib/components/ui/button/button.svelte';
+import { Progress } from '$lib/components/ui/progress';
 
 let file: File | null = null;
 let isDragging = false;
@@ -42,18 +42,16 @@ function handleFileChange(e: Event) {
 	file = selectedFile || null;
 }
 
-	function handleClick() {
-		inputElement.click();
-	}
+function handleClick() {
+	inputElement.click();
+}
 
-    function uploadFile() {
-
-    }
+function uploadFile() {}
 </script>
 
 <h1 class="pb-8 text-center text-3xl font-bold">Upload Files:</h1>
 <div class="flex justify-center">
-	<div class="grid w-full max-w-md items-center gap-1.5 justify-items-center">
+	<div class="grid w-full max-w-5xl items-center justify-items-center gap-1.5">
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
 			class="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors"
@@ -89,10 +87,8 @@ function handleFileChange(e: Event) {
 				Selected file: {file.name} ({(file.size / 1024).toFixed(2)} KB)
 			</p>
 		{/if}
-		
-			<Button class="w-32">Upload</Button>
 
-            <Progress value={33}></Progress>
-		
+		<Progress value={0} class="my-8"></Progress>
+		<Button class=" w-32">Upload</Button>
 	</div>
 </div>

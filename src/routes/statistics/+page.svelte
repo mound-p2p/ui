@@ -32,7 +32,7 @@ let stats = [
 <h1 class="pb-8 text-center text-3xl font-bold">Statistics:</h1>
 
 <div class="grid place-items-center">
-	<div class="grid max-w-7xl grid-cols-4 place-items-center gap-8">
+	<div class="grid max-w-7xl grid-cols-1 place-items-center gap-8 sm:grid-cols-2 lg:grid-cols-3">
 		{#each stats as stat}
 			<Card.Root class="w-full">
 				<Card.Header>
