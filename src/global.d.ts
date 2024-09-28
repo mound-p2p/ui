@@ -29,6 +29,9 @@ type ProcessRequest =
 	  }
 	| {
 			type: 'getPeers';
+	  }
+	| {
+			type: 'getStats';
 	  };
 
 type ProcessFile = {
@@ -57,6 +60,13 @@ type ProcessResponse = { id: number } & (
 	| {
 			data: {
 				progress: number;
+			};
+	  }
+	| {
+			data: {
+				uploadedChunks: number;
+				downloadedChunks: number;
+				downloadedFiles: number;
 			};
 	  }
 );
