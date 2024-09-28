@@ -47,8 +47,6 @@ function handleClick() {
 }
 
 async function uploadFile() {
-	console.log(file.path);
-
 	const res = await window.electron.sendRequest({ type: 'upload', path: file!.path });
 	console.log(res);
 }

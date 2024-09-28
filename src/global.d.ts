@@ -6,6 +6,11 @@ declare interface Window {
 		sendRequest: <T extends ProcessType>(
 			request: ProcessRequest<T>,
 		) => Promise<ProcessResponse<T>>;
+		startServer: (options: Partial<{
+			seed: string,
+			port: number,
+			chunkDir: string,
+		}>) => void;
 		receive: (
 			name: `response:${number}`,
 			callback: (response: {

@@ -2,8 +2,11 @@ const windowStateManager = require('electron-window-state');
 const { app, BrowserWindow, ipcMain } = require('electron');
 const contextMenu = require('electron-context-menu');
 const serve = require('electron-serve');
+const { spawn } = require('child_process');
 const path = require('path');
 const readline = require('node:readline');
+let id_counter = 0;
+const rustExecutablePath = path.join(__dirname, '../bin', 'peer');
 
 try {
 	require('electron-reloader')(module);
@@ -11,51 +14,49 @@ try {
 	console.error(e);
 }
 
-let id_counter = 0;
-const { spawn } = require('child_process');
-const rustExecutablePath = path.join(__dirname, '../bin', 'peer');
-const rustProcess = spawn(rustExecutablePath);
-
-const { stdin: output, stdout: input } = rustProcess;
-const rl = readline.createInterface({ input, output });
-
 const map = new Map();
 
 ipcMain.handle('spawn', async (event, data) => {
-	console.log(data);	
-});
+	const args = ['--port', data.port || '8080', '--chunk-dir', data.chunkDir || 'chunks'];
 
-ipcMain.handle('request', async (event, data) => {
-	return new Promise((resolve, reject) => {
-		const id = id_counter++;
-		const message = JSON.stringify({ id, ...data });
-		map.set(id, { resolve, reject });
-		rustProcess.stdin.write(`${message}\n`);
-	});
-});
-
-rl.on('line', (line) => {
-	const message = JSON.parse(line);
-	const { id } = message;
-	const value = map.get(id);
-
-	if (value) {
-		const { resolve, reject } = value;
-
-		map.delete(id);
-
-		resolve(message);
-	} else {
-		mainWindow.webContents.send(`response:${id}`, message);
+	if (data.seed) {
+		args.push('--seed', data.seed);
 	}
-});
 
-rustProcess.stderr.on('data', (data) => {
-	console.error(`Rust error: ${data}`);
-});
+	const rustProcess = spawn(rustExecutablePath, args);
+	const { stdin: output, stdout: input } = rustProcess;
+	const rl = readline.createInterface({ input, output });
 
-rustProcess.on('close', (code) => {
-	console.log(`Rust process exited with code ${code}`);
+	rl.on('line', (line) => {
+		const message = JSON.parse(line);
+		const { id } = message;
+		const value = map.get(id);
+
+		if (value) {
+			const { resolve, reject } = value;
+
+			map.delete(id);
+
+			resolve(message);
+		} else {
+			mainWindow.webContents.send(`response:${id}`, message);
+		}
+	});
+	rustProcess.stderr.on('data', (data) => {
+		console.error(`Rust error: ${data}`);
+	});
+
+	rustProcess.on('close', (code) => {
+		console.log(`Rust process exited with code ${code}`);
+	});
+	ipcMain.handle('request', async (event, data) => {
+		return new Promise((resolve, reject) => {
+			const id = id_counter++;
+			const message = JSON.stringify({ id, ...data });
+			map.set(id, { resolve, reject });
+			rustProcess.stdin.write(`${message}\n`);
+		});
+	});
 });
 
 const serveURL = serve({ directory: '.' });

@@ -4,14 +4,7 @@ import { Badge } from '$lib/components/ui/badge/index.js';
 import axios from 'axios';
 import { onMount } from 'svelte';
 
-type Node = {
-	addr: string;
-	id: bigint;
-	speed: number;
-	location?: string;
-};
-
-let nodes: Node[] = [];
+let nodes: (Peer & { location?: string })[] = [];
 
 async function updateNodeLocations() {
 	const updatedNodes = await Promise.all(
