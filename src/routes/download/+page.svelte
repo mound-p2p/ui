@@ -7,7 +7,7 @@ let files: ProcessFile[] = [];
 
 onMount(async () => {
 	const res = await window.electron.sendRequest({ type: 'getFiles' });
-	files = res.data as ProcessFile[];
+	files = res.data;
 	console.log(files);
 });
 
@@ -15,9 +15,7 @@ async function downloadFile(file_hash: string) {
 	const res = await window.electron.sendRequest({ type: 'downloadByHash', fileHash: file_hash });
 
 	window.electron.receive(`response:${res.id}`, ({ data }) => {
-		if ('progress' in data) {
-			console.log('download progress', data.progress);
-		}
+		console.log('download progress', data.progress);
 	});
 }
 </script>

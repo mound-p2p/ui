@@ -3,15 +3,29 @@
 /// <reference types="vite/client" />
 declare interface Window {
 	electron: {
-		sendRequest: <T>(request: ProcessRequest) => Promise<ProcessResponse>;
+		sendRequest: <T extends ProcessType>(
+			request: ProcessRequest<T>,
+		) => Promise<ProcessResponse<T>>;
 		receive: (
 			name: `response:${number}`,
-			callback: (response: ProcessResponse) => void,
+			callback: (response: {
+				data: {
+					progress: number;
+				};
+			}) => void,
 		) => void;
 	};
 }
 
-type ProcessRequest =
+type ProcessType =
+	| 'upload'
+	| 'downloadByHash'
+	| 'downloadByName'
+	| 'getFiles'
+	| 'getPeers'
+	| 'getStats';
+
+type ProcessRequest<Type extends ProcessType> = { type: Type } & (
 	| {
 			type: 'upload';
 			path: string;
@@ -32,7 +46,8 @@ type ProcessRequest =
 	  }
 	| {
 			type: 'getStats';
-	  };
+	  }
+);
 
 type ProcessFile = {
 	id: string;
@@ -50,23 +65,26 @@ type Peer = {
 	speed: number;
 };
 
-type ProcessResponse = { id: number } & (
-	| {
-			data: ProcessFile[];
-	  }
-	| {
-			data: Peer[];
-	  }
-	| {
-			data: {
-				progress: number;
-			};
-	  }
-	| {
-			data: {
-				uploadedChunks: number;
-				downloadedChunks: number;
-				downloadedFiles: number;
-			};
-	  }
-);
+type ProcessResponse<Type extends ProcessType> = { id: number } & (Type extends 'upload'
+	? {}
+	: Type extends 'downloadByHash'
+		? {}
+		: Type extends 'downloadByName'
+			? {}
+			: Type extends 'getFiles'
+				? {
+						data: ProcessFile[];
+					}
+				: Type extends 'getPeers'
+					? {
+							data: Peer[];
+						}
+					: Type extends 'getStats'
+						? {
+								data: {
+									uploadedChunks: number;
+									downloadedChunks: number;
+									downloadedFiles: number;
+								};
+							}
+						: never);
