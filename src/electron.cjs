@@ -30,7 +30,7 @@ function createWindow() {
 			y: 32,
 		},
 		minHeight: 650,
-		minWidth: 550,
+		minWidth: 575,
 		webPreferences: {
 			enableRemoteModule: true,
 			contextIsolation: true,

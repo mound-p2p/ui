@@ -60,11 +60,11 @@ onMount(() => {
 
 <h1 class="pb-8 text-center text-3xl font-bold">Connected Nodes:</h1>
 <div class="grid place-items-center">
-	<div class="grid w-full max-w-5xl grid-cols-3 gap-8">
+	<div class="grid w-full max-w-5xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 		{#each nodes as node}
 			<Card.Root>
 				<Card.Header>
-					<Card.Title class="flex items-center gap-3 text-2xl">
+					<Card.Title class="flex items-center gap-2 text-2xl">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="24"
