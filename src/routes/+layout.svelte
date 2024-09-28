@@ -7,7 +7,7 @@ let ready: boolean = false;
 onMount(() => (ready = true));
 </script>
 
-<div class="dragbar" />
+<div class="dragbar"/>
 
 {#if ready}
 	<Navbar />
@@ -21,7 +21,7 @@ onMount(() => (ready = true));
 	-webkit-app-region: drag;
 	position: absolute;
 	z-index: 100;
-	height: 40px;
+	height: 20px;
 	width: 100%;
 }
 </style>

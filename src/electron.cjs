@@ -23,14 +23,14 @@ function createWindow() {
 
 	const mainWindow = new BrowserWindow({
 		backgroundColor: 'whitesmoke',
-		titleBarStyle: 'hidden',
+		titleBarStyle: 'defualt',
 		autoHideMenuBar: true,
 		trafficLightPosition: {
 			x: 17,
 			y: 32,
 		},
-		minHeight: 450,
-		minWidth: 500,
+		minHeight: 650,
+		minWidth: 550,
 		webPreferences: {
 			enableRemoteModule: true,
 			contextIsolation: true,
