@@ -21,6 +21,7 @@
 	<h1>Hello {agent}!</h1>
 
 	<a href="/data">Click Me</a>
+	<a href="/connections">View Connections</a>
 
 	<Counter id="0" {agent} />
 
