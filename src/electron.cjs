@@ -72,7 +72,7 @@ function createWindow() {
 
 	const mainWindow = new BrowserWindow({
 		backgroundColor: 'whitesmoke',
-		titleBarStyle: 'defualt',
+		titleBarStyle: 'default',
 		autoHideMenuBar: true,
 		trafficLightPosition: {
 			x: 17,
@@ -92,6 +92,7 @@ function createWindow() {
 		y: windowState.y,
 		width: windowState.width,
 		height: windowState.height,
+		icon: path.join(__dirname, '..', 'static', 'image.png')
 	});
 
 	windowState.manage(mainWindow);
@@ -112,11 +113,6 @@ contextMenu({
 	showLookUpSelection: false,
 	showSearchWithGoogle: false,
 	showCopyImage: false,
-	prepend: (defaultActions, params, browserWindow) => [
-		{
-			label: 'Make App 💻',
-		},
-	],
 });
 
 function loadVite(port) {
