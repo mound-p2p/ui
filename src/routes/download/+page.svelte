@@ -43,7 +43,7 @@ let files: File[] = [
 						<p class="text-md">hash: {file.hash}</p>
 						<p class="text-md">size: {file.size}</p>
 					</Card.Description>
-					<Button href="/download" variant="outline" class="ml-auto p-6">
+					<Button href="/download" variant="outline" class=" p-6">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="32"
