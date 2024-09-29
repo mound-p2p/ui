@@ -13,7 +13,9 @@ async function updateNodeLocations() {
 			const response = await axios.get(`http://ip-api.com/json/${ip}`);
 			return {
 				...node,
-				location: response.data.city + ', ' + response.data.country,
+				location: response.data?.city
+					? response.data.city + ', ' + response.data.country
+					: 'Ottawa, ON',
 			};
 		}),
 	);

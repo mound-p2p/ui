@@ -81,6 +81,12 @@ type Peer = {
 	speed: number;
 };
 
+type Stats = {
+	uploadedChunks: number;
+	downloadedChunks: number;
+	downloadedFiles: number;
+};
+
 type ProcessResponse<Type extends ProcessType> = { id: number } & (Type extends 'upload'
 	? {}
 	: Type extends 'downloadByHash'
@@ -97,10 +103,6 @@ type ProcessResponse<Type extends ProcessType> = { id: number } & (Type extends 
 						}
 					: Type extends 'getStats'
 						? {
-								data: {
-									uploadedChunks: number;
-									downloadedChunks: number;
-									downloadedFiles: number;
-								};
+								data: Stats;
 							}
 						: never);

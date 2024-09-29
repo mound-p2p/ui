@@ -1,82 +1,71 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card';
-	import { onDestroy, onMount } from 'svelte';
+import * as Card from '$lib/components/ui/card';
+import { statsDiff } from '$lib/stores';
+import { onDestroy, onMount } from 'svelte';
+import { get } from 'svelte/store';
 
-	let stats: any;
+let stats: Stats = {
+	uploadedChunks: 0,
+	downloadedChunks: 0,
+	downloadedFiles: 0,
+};
 
-	let a: number;
-	let b: number;
-	let c: number;
+let interval: NodeJS.Timeout;
+onMount(() => {
+	const statsString = localStorage.getItem('stats');
 
-	let data;
-	let interval: NodeJS.Timer;
-	onMount(() => {
-		if (!localStorage.getItem('ufc')) {
-			localStorage.setItem('ufc', '0');
-		}
-		if (!localStorage.getItem('dfc')) {
-			localStorage.setItem('dfc', '0');
-		}
-		if (!localStorage.getItem('df')) {
-			localStorage.setItem('df', '0');
-		}
+	stats = statsString
+		? JSON.parse(statsString)
+		: {
+				uploadedChunks: 0,
+				downloadedChunks: 0,
+				downloadedFiles: 0,
+			};
 
-		a = Number(localStorage.getItem('ufc'));
-		b = Number(localStorage.getItem('dfc'));
-		c = Number(localStorage.getItem('df'));
+	async function update() {
+		const { data } = await window.electron.sendRequest({ type: 'getStats' });
+		const diff = get(statsDiff);
 
-		let difa = 0;
-		let difb = 0;
-		let difc = 0;
+		stats.uploadedChunks += data.uploadedChunks - diff.uploadedChunks;
+		stats.downloadedChunks += data.downloadedChunks - diff.downloadedChunks;
+		stats.downloadedFiles += data.downloadedFiles - diff.downloadedFiles;
 
-		interval = setInterval(async () => {
-			const res = await window.electron.sendRequest({ type: 'getStats' });
-			data = res.data;
-			a = a + data.uploadedChunks - difa;
-			b = b + data.downloadedChunks - difb;
-			c = c + data.downloadedFiles - difc;
+		statsDiff.set(data);
+	}
 
-			difa = data.uploadedChunks;
-			difb = data.downloadedChunks;
-			difc = data.downloadedFiles;
-		}, 1000);
+	update();
+	interval = setInterval(update, 1000);
+});
 
-		stats = [
-			{
-				title: 'Uploaded File Chunks',
-				value: a,
-			},
+$: liveStats = [
+	{
+		title: 'Uploaded File Chunks',
+		value: stats.uploadedChunks,
+	},
 
-			{
-				title: 'Downloaded File Chunks',
-				value: b,
-			},
+	{
+		title: 'Downloaded File Chunks',
+		value: stats.downloadedChunks,
+	},
 
-			{
-				title: 'Downloaded Files',
-				value: c,
-			},
-			{
-				title: 'Uploaded Files',
-				value: 312312,
-			},
-			{
-				title: 'Downloaded File Chunks',
-				value: 312312,
-			},
-			{
-				title: 'Most Downloaded File',
-				value: 'Name',
-			},
-		];
-	});
+	{
+		title: 'Downloaded Files',
+		value: stats.downloadedFiles,
+	},
+	{
+		title: 'Uploaded Files',
+		value: 3,
+	},
+	{
+		title: 'Most Downloaded File',
+		value: '.gitignore',
+	},
+];
 
-	onDestroy(() => {
-		clearInterval(interval);
-		localStorage.setItem('ufc', a.toString());
-		localStorage.setItem('dfc', b.toString());
-		localStorage.setItem('df', c.toString());
-	});
+onDestroy(() => {
+	if (interval) clearInterval(interval);
+	localStorage.setItem('stats', JSON.stringify(stats));
+});
 </script>
 
 <h1 class="pb-8 text-center text-3xl font-bold">Statistics:</h1>
@@ -84,7 +73,7 @@
 <div class="grid place-items-center">
 	<div class="grid max-w-7xl grid-cols-1 place-items-center gap-8 sm:grid-cols-2 lg:grid-cols-3">
 		{#if stats}
-			{#each stats as stat}
+			{#each liveStats as stat}
 				<Card.Root class="w-full">
 					<Card.Header>
 						<Card.Title class="flex place-items-center">{stat.title}</Card.Title>

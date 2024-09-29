@@ -19,11 +19,12 @@ async function downloadFile(event: Event, file_hash: string) {
 	console.log(res);
 	window.electron.receive(`response:${res.id}`, ({ data }) => {
 		console.log('download progress', data.progress);
-		files.map((file) => {
+		files.forEach((file) => {
 			if (file.id === file_hash) {
 				file.downloadProgress = data.progress;
 			}
 		});
+		files = files;
 	});
 }
 </script>

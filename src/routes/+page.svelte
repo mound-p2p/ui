@@ -20,9 +20,9 @@ async function startServer() {
 <div class="grid h-screen w-screen place-items-center">
 	<div class="flex flex-col items-center justify-center gap-8">
 		<h1 class="pb-8 text-center text-3xl font-bold">Launch Process:</h1>
-		<Input placeholder="Seed: 0.0.0.0" bind:value={seed} />
-		<Input placeholder="Port: 8008" bind:value={port} />
-		<Input placeholder="Chunk Dir: 8008" bind:value={chunkDir} />
+		<Input placeholder="0.0.0.0:8080" bind:value={seed} />
+		<Input placeholder="Port (default: 8008)" bind:value={port} />
+		<Input placeholder="Chunk directory" bind:value={chunkDir} />
 
 		<Button on:click={startServer}>Start Process</Button>
 	</div>
