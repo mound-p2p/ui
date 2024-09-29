@@ -17,8 +17,6 @@ const rustExecutablePath = path.join(__dirname, '../bin', 'peer');
 
 const map = new Map();
 
-
-
 ipcMain.handle('spawn', async (event, data) => {
 	const args = ['--port', data.port || '8080', '--chunk-dir', data.chunkDir || 'chunks'];
 
@@ -34,7 +32,7 @@ ipcMain.handle('spawn', async (event, data) => {
 			resolve();
 		}, 1000);
 
-		rustProcess.once('spawn')
+		rustProcess.once('spawn');
 		rl.on('line', (line) => {
 			const message = JSON.parse(line);
 			const { id } = message;
@@ -66,7 +64,6 @@ ipcMain.handle('spawn', async (event, data) => {
 				rustProcess.stdin.write(`${message}\n`);
 			});
 		});
-
 	});
 });
 
@@ -97,7 +94,7 @@ function createWindow() {
 			nodeIntegration: true,
 			spellcheck: false,
 			devTools: dev,
-			preload: path.join(__dirname, 'preload.js'),
+			preload: path.join(__dirname, 'preload.cjs'),
 		},
 		x: windowState.x,
 		y: windowState.y,
