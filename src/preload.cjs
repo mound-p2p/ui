@@ -12,4 +12,5 @@ contextBridge.exposeInMainWorld('electron', {
 	},
 	sendRequest: async (message) => ipcRenderer.invoke('request', message),
 	startServer: async (message) => ipcRenderer.invoke('spawn', message),
+	openDialog: async () => ipcRenderer.invoke('open-dialog'),
 });

@@ -6,7 +6,7 @@
 	},
 	"files": [
 		"src/electron.js",
-		"src/preload.js",
+		"src/preload.cjs",
 		{
 			"from": "build",
 			"to": ""

@@ -3,12 +3,14 @@ import { Input } from '$lib/components/ui/input';
 import { Label } from '$lib/components/ui/label';
 import Button from '$lib/components/ui/button/button.svelte';
 import { Progress } from '$lib/components/ui/progress';
-import { webUtils } from 'electron';
 
-let file: File | null = null;
 let isDragging = false;
-let files: FileList = [];
-let inputElement: HTMLInputElement;
+let uploadProgress = 0;
+let file: {
+	path: string;
+	name: string;
+	size: number;
+} | null = null;
 
 function handleDragEnter(e: DragEvent) {
 	e.preventDefault();
@@ -33,25 +35,24 @@ function handleDrop(e: DragEvent) {
 	isDragging = false;
 
 	const droppedFile = e.dataTransfer?.files[0];
-	if (droppedFile) {
-		file = droppedFile;
-	}
 }
 
-function handleFileChange(e: Event) {
-	const target = e.target as HTMLInputElement;
-	const selectedFile = target.files?.[0];
-	file = selectedFile || null;
-}
+async function handleClick() {
+	const path = await window.electron.openDialog();
 
-function handleClick() {
-	inputElement.click();
+	file = path ?? null;
 }
 
 async function uploadFile() {
-	console.log(webUtils.getPathForFile(files[0]));
+	if (!file) {
+		return;
+	}
 
-	const res = await window.electron.sendRequest({ type: 'upload', path: file!.path });
+	const res = await window.electron.sendRequest({ type: 'upload', path: file.path });
+
+	window.electron.receive(`response:${res.id}`, ({ data }) => {
+		uploadProgress = data.progress;
+	});
 }
 </script>
 
@@ -71,14 +72,6 @@ async function uploadFile() {
 			on:drop={handleDrop}
 			on:click={handleClick}
 		>
-			<input
-				id="picture"
-				type="file"
-				class="hidden"
-				bind:files={files}
-				on:change={handleFileChange}
-				bind:this={inputElement}
-			/>
 			<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
 				<path
 					fill="#000000"
@@ -91,11 +84,11 @@ async function uploadFile() {
 		</div>
 		{#if file}
 			<p class="mt-2 text-sm text-gray-500">
-				Selected file: {file.name} ({(file.size / 1024).toFixed(2)} KB)
+				Selected file: {file.name} ({(file.size / 1024).toFixed(2)} KiB)
 			</p>
 		{/if}
 
-		<Progress value={0} class="my-8"></Progress>
+		<Progress value={uploadProgress * 100} class="my-8"></Progress>
 		<Button class=" w-32" on:click={uploadFile}>Upload</Button>
 	</div>
 </div>

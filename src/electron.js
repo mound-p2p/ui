@@ -1,10 +1,11 @@
 import windowStateManager from 'electron-window-state';
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import contextMenu from 'electron-context-menu';
 import serve from 'electron-serve';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import readline from 'node:readline';
+import fs from 'node:fs';
 
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,9 +14,28 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let id_counter = 0;
 
-const rustExecutablePath = path.join(__dirname, '../bin', 'mound.exe');
+const rustExecutablePath = path.join(__dirname, '../bin', 'mound');
 
 const map = new Map();
+
+ipcMain.handle('open-dialog', async () => {
+	const selected = dialog.showOpenDialogSync({
+		properties: ['openFile'],
+	});
+
+	const path = selected?.[0];
+
+	if (!path) {
+		return;
+	}
+
+	// get file name and size
+	const stats = await fs.promises.stat(path);
+	const size = stats.size;
+	const name = path.split('/').pop();
+
+	return { path, size, name };
+});
 
 ipcMain.handle('spawn', async (event, data) => {
 	const args = ['--port', data.port || '8080', '--chunk-dir', data.chunkDir || 'chunks'];

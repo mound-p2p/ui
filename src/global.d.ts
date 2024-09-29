@@ -6,11 +6,13 @@ declare interface Window {
 		sendRequest: <T extends ProcessType>(
 			request: ProcessRequest<T>,
 		) => Promise<ProcessResponse<T>>;
-		startServer: (options: Partial<{
-			seed: string,
-			port: number,
-			chunkDir: string,
-		}>) => void;
+		startServer: (
+			options: Partial<{
+				seed: string;
+				port: number;
+				chunkDir: string;
+			}>,
+		) => void;
 		receive: (
 			name: `response:${number}`,
 			callback: (response: {
@@ -19,6 +21,15 @@ declare interface Window {
 				};
 			}) => void,
 		) => void;
+		// Opens file picker and returns absolute path to selected file
+		openDialog(): Promise<
+			| {
+					path: string;
+					name: string;
+					size: number;
+			  }
+			| undefined
+		>;
 	};
 }
 
