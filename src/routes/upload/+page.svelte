@@ -3,9 +3,11 @@ import { Input } from '$lib/components/ui/input';
 import { Label } from '$lib/components/ui/label';
 import Button from '$lib/components/ui/button/button.svelte';
 import { Progress } from '$lib/components/ui/progress';
+import { webUtils } from 'electron';
 
 let file: File | null = null;
 let isDragging = false;
+let files: FileList = [];
 let inputElement: HTMLInputElement;
 
 function handleDragEnter(e: DragEvent) {
@@ -47,8 +49,9 @@ function handleClick() {
 }
 
 async function uploadFile() {
+	console.log(webUtils.getPathForFile(files[0]));
+
 	const res = await window.electron.sendRequest({ type: 'upload', path: file!.path });
-	console.log(res);
 }
 </script>
 
@@ -72,6 +75,7 @@ async function uploadFile() {
 				id="picture"
 				type="file"
 				class="hidden"
+				bind:files={files}
 				on:change={handleFileChange}
 				bind:this={inputElement}
 			/>

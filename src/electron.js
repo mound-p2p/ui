@@ -13,7 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let id_counter = 0;
 
-const rustExecutablePath = path.join(__dirname, '../bin', 'peer');
+const rustExecutablePath = path.join(__dirname, '../bin', 'mound.exe');
 
 const map = new Map();
 
@@ -32,7 +32,6 @@ ipcMain.handle('spawn', async (event, data) => {
 			resolve();
 		}, 1000);
 
-		rustProcess.once('spawn');
 		rl.on('line', (line) => {
 			const message = JSON.parse(line);
 			const { id } = message;
