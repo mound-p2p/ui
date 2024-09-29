@@ -1,18 +1,18 @@
-const windowStateManager = require('electron-window-state');
-const { app, BrowserWindow, ipcMain } = require('electron');
-const contextMenu = require('electron-context-menu');
-const serve = require('electron-serve');
-const { spawn } = require('child_process');
-const path = require('path');
-const readline = require('node:readline');
+import windowStateManager from 'electron-window-state';
+import { app, BrowserWindow, ipcMain } from 'electron';
+import contextMenu from 'electron-context-menu';
+import serve from 'electron-serve';
+import { spawn } from 'node:child_process';
+import path from 'node:path';
+import readline from 'node:readline';
+
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 let id_counter = 0;
 const rustExecutablePath = path.join(__dirname, '../bin', 'peer');
-
-try {
-	require('electron-reloader')(module);
-} catch (e) {
-	console.error(e);
-}
 
 const map = new Map();
 
@@ -86,13 +86,13 @@ function createWindow() {
 			nodeIntegration: true,
 			spellcheck: false,
 			devTools: dev,
-			preload: path.join(__dirname, 'preload.cjs'),
+			preload: path.join(__dirname, 'preload.js'),
 		},
 		x: windowState.x,
 		y: windowState.y,
 		width: windowState.width,
 		height: windowState.height,
-		icon: path.join(__dirname, '..', 'static', 'image.png')
+		icon: path.join(__dirname, '..', 'static', 'image.png'),
 	});
 
 	windowState.manage(mainWindow);
@@ -138,7 +138,6 @@ app.on('activate', () => {
 	if (!mainWindow) {
 		createMainWindow();
 	}
-
 });
 
 app.once('ready', () => {
@@ -146,9 +145,7 @@ app.once('ready', () => {
 });
 
 app.once('close', () => {
-	console.log(
-		"Electron app is closing..."
-	)
+	console.log('Electron app is closing...');
 });
 
 app.on('window-all-closed', () => {

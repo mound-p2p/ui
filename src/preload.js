@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require('electron');
+import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('electron', {
 	send: (channel, data) => {
@@ -11,5 +11,4 @@ contextBridge.exposeInMainWorld('electron', {
 		ipcRenderer.on(channel, (event, ...args) => func(...args));
 	},
 	sendRequest: async (message) => ipcRenderer.invoke('request', message),
-	startServer: async (data) => ipcRenderer.invoke('spawn', data),
 });
