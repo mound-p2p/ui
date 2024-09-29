@@ -1,7 +1,6 @@
 <script lang="ts">
 import { Button } from '$lib/components/ui/button';
 let links = [
-	{ name: 'Server', href: '/' },
 	{ name: 'Upload', href: '/upload' },
 	{ name: 'Download', href: '/download' },
 	{ name: 'Node Connections', href: '/connections' },

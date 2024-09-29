@@ -11,4 +11,5 @@ contextBridge.exposeInMainWorld('electron', {
 		ipcRenderer.on(channel, (event, ...args) => func(...args));
 	},
 	sendRequest: async (message) => ipcRenderer.invoke('request', message),
+	startServer: async (message) => ipcRenderer.invoke('spawn', message),
 });

@@ -12,9 +12,12 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let id_counter = 0;
+
 const rustExecutablePath = path.join(__dirname, '../bin', 'peer');
 
 const map = new Map();
+
+
 
 ipcMain.handle('spawn', async (event, data) => {
 	const args = ['--port', data.port || '8080', '--chunk-dir', data.chunkDir || 'chunks'];
@@ -22,40 +25,48 @@ ipcMain.handle('spawn', async (event, data) => {
 	if (data.seed) {
 		args.push('--seed', data.seed);
 	}
+	return new Promise((resolve, reject) => {
+		const rustProcess = spawn(rustExecutablePath, args);
+		const { stdin: output, stdout: input } = rustProcess;
+		const rl = readline.createInterface({ input, output });
 
-	const rustProcess = spawn(rustExecutablePath, args);
-	const { stdin: output, stdout: input } = rustProcess;
-	const rl = readline.createInterface({ input, output });
+		setTimeout(() => {
+			resolve();
+		}, 1000);
 
-	rl.on('line', (line) => {
-		const message = JSON.parse(line);
-		const { id } = message;
-		const value = map.get(id);
+		rustProcess.once('spawn')
+		rl.on('line', (line) => {
+			const message = JSON.parse(line);
+			const { id } = message;
+			const value = map.get(id);
 
-		if (value) {
-			const { resolve, reject } = value;
+			if (value) {
+				const { resolve, reject } = value;
 
-			map.delete(id);
+				map.delete(id);
 
-			resolve(message);
-		} else {
-			mainWindow.webContents.send(`response:${id}`, message);
-		}
-	});
-	rustProcess.stderr.on('data', (data) => {
-		console.error(`Rust error: ${data}`);
-	});
-
-	rustProcess.on('close', (code) => {
-		console.log(`Rust process exited with code ${code}`);
-	});
-	ipcMain.handle('request', async (event, data) => {
-		return new Promise((resolve, reject) => {
-			const id = id_counter++;
-			const message = JSON.stringify({ id, ...data });
-			map.set(id, { resolve, reject });
-			rustProcess.stdin.write(`${message}\n`);
+				resolve(message);
+			} else {
+				mainWindow.webContents.send(`response:${id}`, message);
+			}
 		});
+
+		rustProcess.stderr.on('data', (data) => {
+			console.error(`Rust error: ${data}`);
+		});
+
+		rustProcess.on('close', (code) => {
+			console.log(`Rust process exited with code ${code}`);
+		});
+		ipcMain.handle('request', async (event, data) => {
+			return new Promise((resolve, reject) => {
+				const id = id_counter++;
+				const message = JSON.stringify({ id, ...data });
+				map.set(id, { resolve, reject });
+				rustProcess.stdin.write(`${message}\n`);
+			});
+		});
+
 	});
 });
 

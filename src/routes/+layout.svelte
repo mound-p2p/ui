@@ -1,19 +1,19 @@
 <script lang="ts">
 import Navbar from '$lib/components/Navbar.svelte';
+import { ready } from '$lib/stores';
 import '../app.css';
 import { onMount } from 'svelte';
-
-let ready: boolean = false;
-onMount(() => (ready = true));
 </script>
 
-<div class="dragbar"/>
+<div class="dragbar" />
 
-{#if ready}
+{#if $ready}
 	<Navbar />
 	<div class="p-8">
 		<slot />
 	</div>
+{:else}
+	<slot />
 {/if}
 
 <style>
