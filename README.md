@@ -1,36 +1,22 @@
-<p align="center">
-  <img src="static/sveltekit-electron.svg" />
-</p>
+# Mound UI
 
-# Sveltekit + Electron
+A simple wrapper around the [`mound`](https://github.com/mound-p2p/mound) command-line tool.
 
-Minimal [Sveltekit](https://github.com/sveltejs/kit#readme) + [Electron](https://www.electronjs.org/) starter template.
+## Installation
 
-<br />
+`cargo` is required to install the `mound` command-line tool. See [rustup](https://rustup.rs/) website for installation instructions.
 
-## Getting Started
+```bash
+# install the mound command-line tool
+cargo install --git https://github.com/mound-p2p/mound
+```
 
-Unfortunately you must use `npm` as there are issues that arise when using `pnpm` or `yarn`
+## Usage
 
-|         |                                             |
-| ------- | ------------------------------------------- |
-| Clone   | · `npx degit fractalhq/sveltekit-electron ` |
-| Install | · `npm install`                             |
-| Develop | · `npm run dev`                             |
-| Build   | · `npm run build`                           |
+```bash
+# build the UI
+pnpm build
+# install it from the `dist` directory by running the installer
+./dist/mound-ui-installer
+```
 
-In order to eliminate vulnerabilities caused by electron itself, please run `npm update` and `npm audit fix`. This will apply overrides.
-
-<br />
-
-<p align="center">
-  <img src="screenshot.png" />
-</p>
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Svelte for VSCode](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
-
-## Change Build Targets
-
-In the scripts section of package.json you can update the `build:electron` command and change the flags to set the targets, by default it uses `-mwl` which is Mac, Windows, and Linux
